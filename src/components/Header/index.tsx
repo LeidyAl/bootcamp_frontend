@@ -74,12 +74,12 @@ const Header = () => {
             <List>
               {itemsAdmin.map(({ title, to }) => {
                 return (
-                  <>
+                  <div key={to}>
                     <ListItemButton onClick={() => redirect(to)}>
                       {title}
                     </ListItemButton>
                     <Divider sx={{ borderColor: '#c5e3f5' }} />
-                  </>
+                  </div>
                 );
               })}
             </List>

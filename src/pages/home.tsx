@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { Divider, Grid, Typography } from '@mui/material';
 
@@ -6,65 +6,52 @@ import GeneralLayout from 'layouts/generalLayout';
 
 import BootcampCard from 'components/BootcampCard';
 
-// interface BootcampList {
-//   profesor: string;
-//   titulo: string;
-//   descripcion: string;
-//   completado: boolean;
-// }
+import axios from 'axios';
 
 const Home = () => {
-  const BootcampList = [
-    {
-      id: 0,
-      profesor: 'Leidy Álvarez',
-      titulo: 'React con Typescript',
-      descripcion:
-        'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nemo tempore provident enim incidunt, qui quo at recusandae a cupiditate molestiae. Temporibus accusamus amet et nostrum pariatur distinctio possimus ullam aperiam.',
-      completado: true,
-    },
-    {
-      id: 1,
-      profesor: 'Mateo Narvaez',
-      titulo: 'Algo de servidores',
-      descripcion:
-        'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nemo tempore provident enim incidunt, qui quo at recusandae a cupiditate molestiae. Temporibus accusamus amet et nostrum pariatur distinctio possimus ullam aperiam.',
-      completado: false,
-    },
-    {
-      id: 2,
-      profesor: 'Daniel Giraldo',
-      titulo: 'Cualquier tema porque es un crack',
-      descripcion:
-        'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nemo tempore provident enim incidunt, qui quo at recusandae a cupiditate molestiae. Temporibus accusamus amet et nostrum pariatur distinctio possimus ullam aperiam.',
-      completado: false,
-    },
-  ];
-  return (
-    <>
-      <GeneralLayout>
-        <Typography variant="h6">Bootcamps registrados</Typography>
-        <Divider />
-        <Grid container spacing={2} mt={1}>
-          {BootcampList.map(
-            ({ completado, id, descripcion, profesor, titulo }) => {
-              return (
-                <Grid item xs={12} md={4}>
-                  <BootcampCard
-                    descripcion={descripcion}
-                    profesor={profesor}
-                    titulo={titulo}
-                    key={id}
-                    completado={completado}
-                  />
+    const [bootcampData, setBootcampData] = useState([]);
+    useEffect(() => {
+        // Make an API request to fetch bootcamp data
+        axios.get("http://localhost:8000/api/bootcamp/")
+            .then((response) => {
+                setBootcampData(response.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching data:', error);
+            });
+    }, []);
+    const refetchBootcampData = () => {
+        axios.get("http://localhost:8000/api/bootcamp/")
+            .then((response) => {
+                setBootcampData(response.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching data:', error);
+            });
+    };
+    return (
+        <>
+            <GeneralLayout>
+                <Typography variant="h6">Bootcamps registrados</Typography>
+                <Divider />
+                <Grid container spacing={2} mt={1}>
+                    {bootcampData.map(({ completado, id, descripcion, profesor, titulo }) => (
+                        <Grid item xs={12} md={4} key={id}>
+                            <BootcampCard
+                                id={id}
+                                descripcion={descripcion}
+                                profesor={profesor}
+                                titulo={titulo}
+                                completado={completado}
+                                onDelete={refetchBootcampData}
+                            />
+                        </Grid>
+                    ))}
                 </Grid>
-              );
-            }
-          )}
-        </Grid>
-      </GeneralLayout>
-    </>
-  );
+
+            </GeneralLayout>
+        </>
+    );
 };
 
 export default Home;
